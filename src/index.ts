@@ -1,37 +1,32 @@
 import prompt from 'prompt-sync'
-import { Quadra } from './Classes/Quadra'
-import { Reserva } from './Classes/Reserva'
+import { Quadra, quadras } from './Classes/Quadra'
+import { Reserva, reservas } from './Classes/Reserva'
 
 const teclado = prompt()
-
-const quadras: Quadra[] = []
-const reservas: Reserva[] = []
 
 function criaQuadra(nome: string, esporte: string) {
   quadras.push(new Quadra(nome, esporte))
 }
-criaQuadra('Palneta Bola', 'futebol')
+criaQuadra('Planeta Bola', 'futebol')
 criaQuadra('Bola na Rede', 'futsal')
 
-function reservaQuadra() {
-  const nomeCliente = teclado("Digite o nome do Cliente:")
-  const idQuadraSelecionada = +teclado("Qual quadra você deseja reservar: ")
-  const horaDesejada = teclado("Qual horario você deseja reservar: ")
-
-  const quadra = quadras.find(quadra => quadra.id === idQuadraSelecionada)
-
-  if (quadra) {
-    quadra.reservaHorario(horaDesejada)
-    const reserva = new Reserva(idQuadraSelecionada, horaDesejada, nomeCliente)
-    reservas.push(reserva)
-  } else {
-    console.log('Quadra não encontrada')
-  }
+function reservaQuadra(
+  nomeCliente: string,
+  idQuadraSelecionada: number,
+  horaDesejada: string
+) {
+  reservas.push(new Reserva(idQuadraSelecionada, horaDesejada, nomeCliente))
 }
 
 function listaQuadrasDisponiveis(horario: string) {
   const quadrasDisp = quadras.filter(quadra => quadra.verificaHorario(horario))
-  console.table(quadrasDisp.map(quadra => ({ id: quadra.id, nome: quadra.nome, esporte: quadra.esporte })))
+  console.table(
+    quadrasDisp.map(quadra => ({
+      id: quadra.id,
+      nome: quadra.nome,
+      esporte: quadra.esporte
+    }))
+  )
 }
 
 function listaReservas() {
@@ -39,7 +34,28 @@ function listaReservas() {
     console.log('Não há reservas cadastradas')
     return
   }
-  console.table(reservas.map(reserva => ({ id: reserva.id, nome: reserva.nomeCliente, horario: reserva.horarioReserva, quadra: quadras.find(quadra => quadra.id === reserva.idQuadra)?.nome })))
+  console.table(
+    reservas.map(reserva => ({
+      id: reserva.id,
+      nome: reserva.nomeCliente,
+      horario: reserva.horarioReserva,
+      quadra: quadras.find(quadra => quadra.id === reserva.idQuadra)?.nome
+    }))
+  )
+}
+
+function listaQuadras() {
+  if (reservas.length === 0) {
+    console.log('Não há quadras cadastradas')
+    return
+  }
+  console.table(
+    quadras.map(quadra => ({
+      id: quadra.id,
+      nome: quadra.nome,
+      esporte: quadra.esporte
+    }))
+  )
 }
 
 while (true) {
@@ -63,7 +79,10 @@ while (true) {
       criaQuadra(nome, esporte)
       break
     case 2:
-      reservaQuadra()
+      const nomeCliente = teclado('Digite o nome do Cliente:')
+      const idQuadraSelecionada = +teclado('Qual quadra você deseja reservar: ')
+      const horaDesejada = teclado('Qual horario você deseja reservar: ')
+      reservaQuadra(nomeCliente, idQuadraSelecionada, horaDesejada)
       break
     case 3:
       const horario = teclado('Digite o horario: ')
@@ -73,7 +92,7 @@ while (true) {
       listaReservas()
       break
     case 5:
-      console.table(quadras.map(quadra => ({ id: quadra.id, nome: quadra.nome, esporte: quadra.esporte })))
+      listaQuadras()
       break
     default:
       break

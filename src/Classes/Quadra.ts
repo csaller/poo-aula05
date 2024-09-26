@@ -29,7 +29,9 @@ const horariosIniciais = [{
 
 let idQuadra = 1
 
-export class Quadra {
+export const quadras: Quadra[] = []
+
+export class Quadra{
   id: number
   nome: string
   esporte: string
@@ -46,10 +48,13 @@ export class Quadra {
     idQuadra++
   }
 
-  reservaHorario(horario: string): void {
+  reservaHorario(horario: string): boolean {
     const horarioReservado = this.horarios.find((h) => h.horario === horario)
-    if (horarioReservado) {
+    if (horarioReservado && horarioReservado.disponivel) {
       horarioReservado.disponivel = false
+      return true
+    } else {
+      return false
     }
   }
 
